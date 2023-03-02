@@ -1,12 +1,18 @@
+// Ship.js
 class Ship {
-    constructor(currentPort) {
-      this.currentPort = currentPort;
+    constructor(port) {
+      this.currentPort = port;
       this.status = 'moored';
     }
   
     setSail(port) {
       this.currentPort = port;
       this.status = 'sailing';
+    }
+  
+    dock(port) {
+      this.currentPort = port;
+      this.status = 'moored';
     }
   }
   
