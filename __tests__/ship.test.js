@@ -1,40 +1,54 @@
-const Port = require("../src/Port");
 const Ship = require("../src/Ship");
-const Itinerary = require("../src/Itinerary");
+const Port = require("../src/Port");
 
 describe("Ship", () => {
-  let dover, calais, itinerary, ship;
-
-  beforeEach(() => {
-    dover = new Port("Dover");
-    calais = new Port("Calais");
-    itinerary = new Itinerary([dover, calais]);
-    ship = new Ship(itinerary);
+  describe("constructor", () => {
+    it("returns an object", () => {
+      const port = new Port("Dover");
+      const ship = new Ship(port);
+      expect(ship).toBeInstanceOf(Object);
+    });
   });
 
-  it("can be instantiated", () => {
-    expect(ship).toBeInstanceOf(Ship);
+  describe("setSail", () => {
+    let ship;
+    let port;
+
+    beforeEach(() => {
+      port = new Port("Dover");
+      ship = new Ship(port);
+    });
+
+    it("sets sail", () => {
+      ship.setSail();
+      expect(ship.currentPort).toBeFalsy();
+    });
+
+    it("can't set sail further than its current port", () => {
+      ship.setSail();
+      expect(() => ship.setSail()).toThrowError("Ship cannot sail without a current port");
+    });
   });
 
-  it("has a starting port", () => {
-    expect(ship.currentPort).toBe(dover);
+  describe("dock", () => {
+    let port, ship;
+  
+    beforeEach(() => {
+      port = new Port("Dover");
+      ship = new Ship(port);
+    });
+  
+    it("docks at a different port", () => {
+      const newPort = new Port("Calais");
+      ship.setSail();
+      ship.dock(newPort);
+      expect(ship.currentPort).toBe(newPort);
+      expect(newPort.ships).toContain(ship);
+    });
+  
+    it("throws an error if the ship is already docked", () => {
+      expect(() => ship.dock(port)).toThrowError("Ship is already docked");
+    });
   });
-
-  it("can set sail", () => {
-    ship.setSail();
-    expect(ship.currentPort).toBeFalsy();
-    expect(ship.previousPort).toBe(dover);
-  });
-
-  it("can dock at a port", () => {
-    ship.setSail();
-    ship.dock();
-    expect(ship.currentPort).toBe(calais);
-  });
-
-  it("throws an error if it goes past the last port in the itinerary", () => {
-    ship.setSail();
-    ship.dock();
-    expect(() => ship.setSail()).toThrow("End of itinerary reached");
-  });
+  
 });

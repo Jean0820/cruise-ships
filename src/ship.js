@@ -1,27 +1,25 @@
-const Port = require("./Port");
-
 class Ship {
-  constructor(itinerary) {
-    this.previousPort = null;
-    this.currentPort = itinerary.ports[0];
-    this.itinerary = itinerary;
-  }
-
-  setSail() {
-    const itinerary = this.itinerary;
-    const currentPortIndex = itinerary.ports.indexOf(this.currentPort);
-    if (currentPortIndex === itinerary.ports.length - 1) {
-      throw new Error("End of itinerary reached");
+    constructor(port) {
+      this.currentPort = port;
+      this.previousPort = null;
     }
-    this.previousPort = this.currentPort;
-    this.currentPort = null;
+  
+    setSail() {
+      if (!this.currentPort) {
+        throw new Error("Ship cannot sail without a current port");
+      }
+      this.previousPort = this.currentPort;
+      this.currentPort = null;
+    }
+  
+    dock(port) {
+      if (this.currentPort) {
+        throw new Error("Ship is already docked");
+      }
+      this.currentPort = port;
+      port.addShip(this);
+    }
   }
-
-  dock() {
-    const itinerary = this.itinerary;
-    const previousPortIndex = itinerary.ports.indexOf(this.previousPort);
-    this.currentPort = itinerary.ports[previousPortIndex + 1];
-  }
-}
-
-module.exports = Ship;
+  
+  module.exports = Ship;
+  
