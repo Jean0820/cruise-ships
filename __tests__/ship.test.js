@@ -1,54 +1,49 @@
-const Ship = require("../src/Ship");
-const Port = require("../src/Port");
+const Ship = require("../src/ship");
 
 describe("Ship", () => {
   describe("constructor", () => {
     it("returns an object", () => {
-      const port = new Port("Dover");
-      const ship = new Ship(port);
-      expect(ship).toBeInstanceOf(Object);
+      expect(new Ship()).toBeInstanceOf(Object);
     });
   });
 
   describe("setSail", () => {
-    let ship;
-    let port;
-
-    beforeEach(() => {
-      port = new Port("Dover");
-      ship = new Ship(port);
-    });
-
     it("sets sail", () => {
+      const ship = new Ship();
       ship.setSail();
       expect(ship.currentPort).toBeFalsy();
     });
 
     it("can't set sail further than its current port", () => {
-      ship.setSail();
-      expect(() => ship.setSail()).toThrowError("Ship cannot sail without a current port");
+      const port = jest.fn();
+      const itinerary = { ports: [port] };
+      const ship = new Ship(itinerary);
+      ship.dock(port);
+
+      expect(() => ship.setSail()).toThrowError("Can't sail further than itinerary");
+      expect(ship.currentPort).toBe(port);
     });
   });
 
   describe("dock", () => {
-    let port, ship;
-  
-    beforeEach(() => {
-      port = new Port("Dover");
-      ship = new Ship(port);
-    });
-  
     it("docks at a different port", () => {
-      const newPort = new Port("Calais");
-      ship.setSail();
+      const port = jest.fn();
+      const itinerary = { ports: [jest.fn(), port] };
+      const ship = new Ship(itinerary);
+      const newPort = jest.fn();
+
       ship.dock(newPort);
+
       expect(ship.currentPort).toBe(newPort);
-      expect(newPort.ships).toContain(ship);
     });
-  
+
     it("throws an error if the ship is already docked", () => {
+      const port = jest.fn();
+      const itinerary = { ports: [port] };
+      const ship = new Ship(itinerary);
+      ship.dock(port);
+
       expect(() => ship.dock(port)).toThrowError("Ship is already docked");
     });
   });
-  
 });

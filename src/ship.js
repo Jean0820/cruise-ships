@@ -1,23 +1,31 @@
 class Ship {
-    constructor(port) {
-      this.currentPort = port;
+    constructor(itinerary) {
+      this.itinerary = itinerary;
+      this.currentPortIndex = 0;
       this.previousPort = null;
+      this.currentPort = itinerary.ports[this.currentPortIndex];
+      this.currentPort.addShip(this);
     }
   
     setSail() {
-      if (!this.currentPort) {
-        throw new Error("Ship cannot sail without a current port");
+      const nextPortIndex = this.currentPortIndex + 1;
+      if (nextPortIndex >= this.itinerary.ports.length) {
+        throw new Error("Can't sail further than itinerary");
       }
+      this.currentPort.removeShip(this);
       this.previousPort = this.currentPort;
-      this.currentPort = null;
+      this.currentPortIndex = nextPortIndex;
+      this.currentPort = this.itinerary.ports[this.currentPortIndex];
     }
   
     dock(port) {
-      if (this.currentPort) {
+      if (this.currentPort === port) {
         throw new Error("Ship is already docked");
       }
+      this.currentPort.removeShip(this);
+      this.previousPort = this.currentPort;
       this.currentPort = port;
-      port.addShip(this);
+      this.currentPort.addShip(this);
     }
   }
   
