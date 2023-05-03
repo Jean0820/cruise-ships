@@ -8,24 +8,38 @@ class Ship {
   }
 
   setSail() {
-    const nextPortIndex = this.currentPortIndex + 1;
-    if (nextPortIndex >= this.itinerary.ports.length) {
-      throw new Error("Can't sail further than itinerary");
+    const itinerary = this.itinerary;
+    const currentPortIndex = this.currentPortIndex;
+    const nextPortIndex = currentPortIndex + 1;
+    const nextPort = itinerary.ports[nextPortIndex];
+
+    if (nextPortIndex >= itinerary.ports.length) {
+      throw new Error('End of itinerary reached');
     }
-    this.currentPort.removeShip(this);
+
     this.previousPort = this.currentPort;
+    this.currentPort = null;
+    this.previousPort.removeShip(this);
     this.currentPortIndex = nextPortIndex;
-    this.currentPort = this.itinerary.ports[this.currentPortIndex];
+    nextPort.addShip(this);
   }
 
-  dock(port) {
-    if (this.currentPort === port) {
-      throw new Error("Ship is already docked");
+  dock() {
+    const itinerary = this.itinerary;
+    const currentPortIndex = this.currentPortIndex;
+    const previousPort = this.previousPort;
+
+    if (currentPortIndex === 0) {
+      throw new Error('Already docked at the first port');
     }
-    this.currentPort.removeShip(this);
-    this.previousPort = this.currentPort;
-    this.currentPort = port;
+
+    previousPort.removeShip(this);
+    this.currentPort = itinerary.ports[currentPortIndex];
     this.currentPort.addShip(this);
+  }
+
+  getCurrentPort() {
+    return this.currentPort;
   }
 }
 

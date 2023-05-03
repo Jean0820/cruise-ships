@@ -9,9 +9,9 @@ class Port {
   }
 
   removeShip(ship) {
-    const index = this.ships.indexOf(ship);
-    if (index > -1) {
-      this.ships.splice(index, 1);
+    const shipIndex = this.ships.indexOf(ship);
+    if (shipIndex > -1) {
+      this.ships.splice(shipIndex, 1);
     }
   }
 }
